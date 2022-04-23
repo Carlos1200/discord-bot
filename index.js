@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const Client = require('./client/Client');
 const config = require('./config.json');
 const {Player} = require('discord-player');
+require('dotenv').config();
 
 const client = new Client();
 client.commands = new Discord.Collection();
@@ -76,6 +77,24 @@ client.on("guildMemberRemove", async member => {
   channel.send(`¡${member} Largate maldito, ni te queríamos!`);
 });
 
+client.on('guildBanAdd', async (guild, user) => {
+  const channel = guild.channels.cache.find(ch => ch.name === "general"|| ch.name === "playground"|| ch.name === "🍕general");
+  if (!channel) return;
+  channel.send(`¡${user} Por imbécil te baneraron!`);
+});
+
+client.on('guildBanRemove', async (guild, user) => {
+  const channel = guild.channels.cache.find(ch => ch.name === "general"|| ch.name === "playground"|| ch.name === "🍕general");
+  if (!channel) return;
+  channel.send(`¡${user} se agüitaron y te quitaron el ban!`);
+});
+
+client.on("inviteCreate", async (invite) => {
+  const channel = invite.guild.channels.cache.find(ch => ch.name === "general"|| ch.name === "playground"|| ch.name === "🍕general");
+  if (!channel) return;
+  channel.send(`¡Buxos ${invite.inviter} creó una invitación!`);
+});
+
 client.on('messageCreate', async message => {
   if (message.author.bot || !message.guild) return;
   if (!client.application?.owner) await client.application?.fetch();
@@ -110,4 +129,4 @@ client.on('interactionCreate', async interaction => {
   }
 });
 
-client.login(config.token);
+client.login(process.env.TOKEN);
